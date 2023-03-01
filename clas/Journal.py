@@ -1,5 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel
+from sqlalchemy import select
 
 from base import database, t_users, t_journal
 
@@ -19,3 +20,23 @@ class Journal(BaseModel):
             task=TASK
                 )
         await database.execute(query)
+
+    @staticmethod
+    async def get_all() -> list:
+        "Получение списка пользователей"
+        join = t_journal.join(
+                t_users,
+                t_journal.c.u_id == t_journal.c.u_id
+                )
+        query = select([
+            t_journal.c.j_id,
+            t_users.c.name,
+            t_users.c.org_name,
+            t_journal.c.date,
+            t_journal.c.task
+            ]).order_by(t_journal.c.j_id).select_from(join)
+
+        list_ = []
+        for row in await database.fetch_all(query):
+            list_.append({**row})
+        return list_

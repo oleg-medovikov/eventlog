@@ -4,10 +4,11 @@ import pandas as pd
 import os
 
 from func import delete_message, write_styling_excel
-from clas import User
+from clas import User, Journal
 
 DICT_XLSX = [
     'get_users',
+    'get_journal',
     ]
 
 
@@ -23,7 +24,12 @@ async def get_files_help(message: types.Message):
         return None
 
     MESS = """*Доступные команды для редактирования базы*
+
+        Получить пользователей
     /get_users
+
+        Получить журнал активности
+    /get_journal
     """.replace('_', '\\_')
 
     return await message.answer(MESS, parse_mode='Markdown')
@@ -44,12 +50,13 @@ async def send_objects_file(message: types.Message):
 
     JSON = {
         'get_users':    User.get_all(),
+        'get_journal':  Journal.get_all(),
         }.get(COMMAND)
 
     try:
         JSON = await JSON
-    except TypeError:
-        return await message.answer('Пока проблемы с этой командой')
+    except Exception as e:
+        return await message.answer(f'Пока проблемы с этой командой\n{str(e)}')
 
     df = pd.DataFrame(data=JSON)
     try:
