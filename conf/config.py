@@ -4,3 +4,4 @@ config = Config('../.config/bot/.conf')
 
 DATABASE_POSTGRESS = config('DB_PSS_EVENTLOG', cast=str)
 TELEGRAM_API = config('TELEGRAM_API_EVENTLOG', cast=str)
+GORZDRAV_API = config('GORZDRAV_API', cast=str)

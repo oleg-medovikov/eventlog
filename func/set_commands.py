@@ -5,6 +5,7 @@ async def set_commands(dp):
     commands = []
     DICT = {
         'start': 'Приветсвие',
+        'remd':  'Получить лог отправки в РЭМД'
             }
     for key, value in DICT.items():
         commands.append(BotCommand(

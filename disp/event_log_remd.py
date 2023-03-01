@@ -1,8 +1,10 @@
 from .dispetcher import dp
 from aiogram import types
+import os
 
 from clas import User
-from func import delete_message, write_styling_excel
+from func import delete_message, write_styling_excel,\
+    get_remd
 from conf import USER_UNKNOW
 
 
@@ -14,9 +16,9 @@ async def event_log_remd(message: types.Message):
     except ValueError:
         return await message.answer(USER_UNKNOW, parse_mode='html')
 
+    df = get_remd(USER)
+    file = 'temp/filename.xlsx'
 
-
-
-    write_styling_excel_file(file, df, 'svod')
+    write_styling_excel(file, df, 'svod')
     await message.answer_document(open(file, 'rb'))
-    await message.answer(MESS, parse_mode='html')
+    os.remove(file)
