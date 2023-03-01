@@ -16,7 +16,7 @@ class User(BaseModel):
     @staticmethod
     async def get(TG_ID: int) -> 'User':
         "Берем пользователя по телеграм id"
-        query = t_users.select(t_users.c.tg_id == TG_ID)
+        query = t_users.select(t_users.c.u_id == TG_ID)
         res = await database.fetch_one(query)
         if res is not None:
             return User(**res)
@@ -45,7 +45,7 @@ class User(BaseModel):
 
             # если строки нет, то добавляем
             if res is None:
-                string += f"добавил пользователя {user['u_id']}"
+                string += f"добавил пользователя {user['name']}"
                 query = t_users.insert().values(**user)
                 await database.execute(query)
                 continue
@@ -53,7 +53,7 @@ class User(BaseModel):
             # если строчка есть ищем несовпадение значений, чтобы заменить
             for key, value in dict(res).items():
                 if user[key] != value:
-                    string += f"обновил пользователя {user['u_id']}"
+                    string += f"обновил пользователя {user['name']}"
                     query = t_users.update()\
                         .where(t_users.c.u_id == user['u_id'])\
                         .values(**user)
