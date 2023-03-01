@@ -9,7 +9,7 @@ from clas import User
 from func import delete_message
 
 NAMES = {
-    'Users.xlsx': [
+    'users.xlsx': [
         'u_id', 'name', 'name_tg', 'admin',
         'org_name', 'org_code', 'date_update'
         ],
@@ -54,7 +54,7 @@ async def update_base(message: types.Message):
     list_ = df.to_dict('records')
 
     MESS = {
-        'Users':    User.update_all(list_),
+        'users':    User.update(list_),
         }.get(FILE['file_name'][:-5])
 
     try:
