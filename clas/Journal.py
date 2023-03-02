@@ -26,7 +26,7 @@ class Journal(BaseModel):
         "Получение списка пользователей"
         join = t_journal.join(
                 t_users,
-                t_journal.c.u_id == t_journal.c.u_id
+                t_journal.c.u_id == t_users.c.u_id
                 )
         query = select([
             t_journal.c.j_id,

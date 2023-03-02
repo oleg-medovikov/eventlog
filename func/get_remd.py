@@ -1,6 +1,7 @@
 from pandas import DataFrame, to_datetime
 import requests
 from datetime import datetime, timedelta
+import re
 
 from clas import User
 from conf import GORZDRAV_API
@@ -12,6 +13,15 @@ col_dict = {
     'result': 'результат',
     'emdTypeName': 'Тип ЭМД',
         }
+
+
+def clear_fio_snils(df: 'DataFrame') -> 'DataFrame':
+    for i in df.index:
+        if 'Имя пациента' or 'СНИЛС' in df.at[i, 'result']:
+            for name in re.findall(r"(?<=\[).*?(?=\])", df.at[i, 'result']):
+                res = df.at[i, 'result'].replace(name, 'скрытое ИМЯ или СНИЛС')
+                df.loc[i, 'result'] = res
+    return df
 
 
 def get_remd(USER: 'User') -> 'DataFrame':
@@ -30,6 +40,7 @@ def get_remd(USER: 'User') -> 'DataFrame':
     res = requests.post(GORZDRAV_API, json=body)
     if res.status_code == 200:
         df = DataFrame(data=res.json())
+        df = clear_fio_snils(df)
         df['date'] = to_datetime(df['date']).dt.strftime('%Y-%m-%d  %H:%M')
         d = DataFrame()
         for key, value in col_dict.items():
