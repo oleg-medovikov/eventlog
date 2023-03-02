@@ -1,6 +1,6 @@
 from datetime import datetime
 from pydantic import BaseModel
-from sqlalchemy import select
+from sqlalchemy import select, and_, desc
 
 from base import database, t_users, t_journal
 
@@ -40,3 +40,17 @@ class Journal(BaseModel):
         for row in await database.fetch_all(query):
             list_.append({**row})
         return list_
+
+    @staticmethod
+    async def get_last_time(U_ID: int, TASK: str) -> int:
+        "сколько осталось времени по таймауту"
+        query = t_journal.select().where(and_(
+            t_journal.c.u_id == U_ID,
+            t_journal.c.task == TASK
+            )).order_by(desc('date'))
+
+        res = await database.fetch_one(query)
+        if res is None:
+            return 0
+        else:
+            return 300 - (datetime.now() - res['date']).seconds
