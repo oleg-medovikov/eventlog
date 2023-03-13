@@ -48,4 +48,6 @@ def get_remd(USER: 'User') -> 'DataFrame':
         return d
 
     else:
-        return DataFrame()
+        df = DataFrame()
+        df.loc[0, 'error'] = res.text
+        return df
